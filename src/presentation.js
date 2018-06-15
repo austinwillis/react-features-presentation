@@ -243,6 +243,54 @@ const Table = () => (
           </Heading>
           <Portal />          
         </Slide>
+        <Slide transition={['fade']} bgColor="tertiary" textColor="secondary">
+          <Heading margin="-100px auto" size={6} textColor="primary">Render a portal anywhere in the React tree</Heading>
+          <CodePane
+            textSize="20px"
+            lang="js"
+            source={`
+  render() {
+    return <React.Fragment>
+        {this.state.portalOpen && <Portal />}
+        <button onClick={this.togglePortal}>
+            Toggle Portal
+        </button>
+    </React.Fragment>
+}`}
+            margin="200px 0 50px auto"
+          />
+        </Slide>
+        <Slide transition={['fade']} bgColor="tertiary" textColor="secondary">
+          <Heading margin="-100px auto" size={6} textColor="primary">Attach a portal to a DOM element</Heading>
+          <CodePane
+            textSize="20px"
+            lang="js"
+            source={`const portalRoot = document.getElementById('portalRoot');
+
+class Portal extends React.Component {
+  constructor(props) {
+      super(props);
+      this.el = document.createElement('div');
+  }
+
+  componentDidMount() {
+      portalRoot.appendChild(this.el);
+  }
+
+  componentWillUnmount() {
+      portalRoot.removeChild(this.el);
+  }
+
+  render() {
+      return ReactDOM.createPortal(
+          <img src={require('./portal.png')} />,
+          this.el
+      );
+  }
+}`}
+            margin="200px 0 50px auto"
+          />
+        </Slide>
       </Deck>
     );
   }
