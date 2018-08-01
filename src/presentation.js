@@ -4,15 +4,14 @@ import React from 'react';
 // Import Spectacle Core tags
 import {
   BlockQuote,
-  Cite,
   Deck,
   Heading,
   ListItem,
   List,
-  Quote,
   Slide,
   Text,
   CodePane,
+  Link
 } from 'spectacle';
 
 // Import theme
@@ -21,6 +20,7 @@ import createTheme from 'spectacle/lib/themes/default';
 import Error from './error-boundaries/error'
 import Boundary from './error-boundaries/boundary'
 import Portal from './portal'
+import FocusRef from './refs'
 
 // Require CSS
 require('normalize.css');
@@ -47,9 +47,29 @@ export default class Presentation extends React.Component {
         theme={theme}
       >
         <Slide transition={['zoom']} bgColor="primary">
-          <Heading size={1} fit caps lineHeight={1} textColor="secondary">
+          <Heading size={1} lineHeight={1} textColor="secondary">
             React's Latest Features
           </Heading>
+        </Slide>
+        <Slide transition={['zoom']} bgColor="primary">
+          <Heading size={2} lineHeight={1} textColor="secondary">
+            Austin Willis
+          </Heading>
+          <Heading size={3} lineHeight={1} textColor="secondary">
+            1904labs
+          </Heading>
+        </Slide>
+        <Slide transition={['zoom']} bgColor="primary">
+          <Heading size={1} fit caps lineHeight={1} textColor="secondary">
+            React Fiber
+          </Heading>
+          <List>
+            <ListItem>Complete rearchitecture of react</ListItem>
+            <ListItem>Incremental rendering: the ability to split rendering work into chunks and spread it out over multiple frames</ListItem>
+            <ListItem>Ability to pause, abort, or reuse work as new updates come in</ListItem>
+            <ListItem>Ability to assign priority to different types of updates</ListItem>
+          </List>
+          <Link href="https://github.com/acdlite/react-fiber-architecture" target="_blank">https://github.com/acdlite/react-fiber-architecture</Link>
         </Slide>
         <Slide transition={['fade']} bgColor="tertiary">
           <Heading size={3} textColor="primary">
@@ -69,6 +89,9 @@ export default class Presentation extends React.Component {
           </Heading>
           <Heading size={3} textColor="primary">
             New lifecycle methods
+          </Heading>
+          <Heading size={3} textColor="primary">
+            Upcoming Features
           </Heading>
         </Slide>
         <Slide transition={['zoom']} bgColor="primary">
@@ -290,6 +313,294 @@ class Portal extends React.Component {
 }`}
             margin="200px 0 50px auto"
           />
+        </Slide>
+        <Slide transition={['zoom']} bgColor="primary">
+          <Heading size={1} fit caps lineHeight={1} textColor="secondary">
+            Ref Changes
+          </Heading>
+        </Slide>
+        <Slide transition={['fade']} bgColor="secondary" textColor="primary">
+          <Heading size={3} textColor="primary">When to use refs?</Heading>
+          <List>
+            <ListItem>Managing focus, text selection, or media playback.</ListItem>
+            <ListItem>Triggering imperative animations.</ListItem>
+            <ListItem>Integrating with third-party DOM libraries.</ListItem>
+          </List>
+        </Slide>
+        <Slide transition={['fade']} bgColor="tertiary" textColor="secondary">
+            <Heading margin="-100px auto" size={6} textColor="primary">Old Refs</Heading>
+            <CodePane
+              textSize="20px"
+              lang="js"
+              source={`
+    class FocusRef extends React.Component {
+      state = { text: '' }
+
+      update({ e: { target: { value }}}) { this.setState({ text: value }) }
+
+      setRef(node) {
+        this.node = node;
+      }
+
+      focus() {
+        // validate
+        this.node.focus();
+      }
+    
+      render() {
+        return <React.Fragment>
+          <input ref={this.setRef} value={this.state.text} onChange={this.update} />
+          <button onClick={this.focus} >focus</button>
+        </React.Fragment>
+      }
+    }`}
+                margin="200px 0 50px auto"
+          />
+        </Slide>
+        <Slide transition={['zoom']} bgColor="primary">
+          <Heading margin="140px auto" size={3} fit lineHeight={1} textColor="secondary">
+            Ref Secret Word Demo
+          </Heading>
+          <FocusRef />          
+        </Slide>
+        <Slide transition={['fade']} bgColor="tertiary" textColor="secondary">
+            <Heading margin="-100px auto" size={6} textColor="primary">New Refs</Heading>
+            <CodePane
+              textSize="20px"
+              lang="js"
+              source={`
+    class FocusRef extends React.Component {
+      constructor(props) {
+        super(props);
+        this.myRef = React.createRef();
+        this.state = { text: '' }
+      }
+
+
+      update({ e: { target: { value }}}) { this.setState({ text: value }) }
+
+      focus() {
+        // validate
+        this.myRef.current.focus();
+      }
+    
+      render() {
+        return <React.Fragment>
+          <input ref={this.myRef} value={this.state.text} onChange={this.update} />
+          <button onClick={this.focus} >focus</button>
+        </React.Fragment>
+      }
+    }`}
+                margin="200px 0 50px auto"
+          />
+        </Slide>
+        <Slide transition={['zoom']} bgColor="primary">
+          <Heading margin="140px auto" size={3} fit caps lineHeight={1} textColor="secondary">
+            New Context API
+          </Heading>        
+        </Slide>
+        <Slide transition={['fade']}>
+          <Heading margin="-100px auto" size={6} textColor="secondary">Legacy Context Api</Heading>
+            <CodePane
+              textSize="20px"
+              lang="js"
+              source={`class AdminUser extends React.Component {
+  getChildContext() {
+    return { isAdmin: this.state.adminUser };
+  }
+
+  render() {
+    return this.props.children;
+  }
+}
+
+AdminUser.childContextTypes = {
+  isAdmin: PropTypes.boolean
+};
+`}
+                margin="200px 0 50px auto"
+          />
+        </Slide>
+        <Slide transition={['fade']}>
+          <Heading margin="-100px auto" size={6} textColor="secondary">Legacy Context Api continued</Heading>
+            <CodePane
+              textSize="20px"
+              lang="js"
+              source={`class AdminPage extends React.Component {
+  render() {
+    return !this.context.isAdmin && <h3>Unauthorized</h3>;
+  }
+}
+
+AdminUser.contextTypes = {
+  isAdmin: PropTypes.boolean
+};
+`}
+                margin="200px 0 50px auto"
+          />
+        </Slide>
+        <Slide bgColor="secondary" transition={['fade']}>
+          <Heading size={6} textColor="primary">Legacy Context Api Problem</Heading>
+          <BlockQuote textColor="primary">
+            If a context value provided by a component changes, descendants that use that value won’t update if an intermediate parent returns false from shouldComponentUpdate.
+          </BlockQuote>
+        </Slide>
+        <Slide transition={['fade']}>
+            <Heading margin="-200px 0 50px auto" size={6} textColor="secondary">New Context API</Heading>
+            <CodePane
+              textSize="20px"
+              lang="js"
+              source={`// adminContext.js
+import {createContext} from 'react';
+export createContext({ isAdmin: false });
+
+// App.jsx
+import {Provider} from './adminContext.js';
+export class App extends React.Component {
+  constructor() {
+    this.state = { isAdmin: false }
+  }
+
+  componentDidMount() { // find out if admin and set state }
+
+  render() {
+    <Provider value={this.state}>
+      {this.props.children}
+    </Provider>
+  }
+}
+
+// AdminPage.jsx
+import {Consumer} from './adminContext'
+class AdminPage extends React.Component {
+  render() {
+    <Consumer>
+      {({ isAdmin }) => (
+        isAdmin ? 'Authorized' : 'Unauthorized'
+      )}
+    </Consumer>
+  }
+}`}
+                margin="0px 0 50px auto"
+          />
+        </Slide>
+        <Slide transition={['fade']}>
+            <Heading margin="-200px 0 50px auto" size={6} textColor="secondary">Changing Context</Heading>
+            <CodePane
+              textSize="20px"
+              lang="js"
+              source={`// themeContext.js
+export createContext({ theme: 'light', toggleTheme: () => {} });
+// App.jsx
+export class App extends React.Component {
+  constructor(props) {
+    super(props);
+
+    this.toggleTheme = () => {
+      this.setState(state => ({
+        theme: state.theme === 'dark' ? 'light' : 'dark',
+      }));
+    };
+
+    this.state = { theme: themes.light, toggleTheme: this.toggleTheme };
+  }
+
+  render() {
+    <Provider value={this.state}>{this.props.children}</Provider>
+  }
+}
+// ToggleThemeButton.jsx
+class ToggleThemeButton extends React.Component {
+  render() {
+    <Consumer>
+      {({ theme, toggleTheme }) => (
+        <button onClick={toggleTheme} className={\`btn ${theme}\`}>Toggle Theme</button>
+      )}
+    </Consumer>
+  }
+}`}
+                margin="0px 0 50px auto"
+          />
+        </Slide>
+        <Slide bgColor="secondary" transition={['fade']}>
+          <Heading size={6} textColor="primary">New Lifecycle Methods</Heading>
+          <List textColor="primary">
+            <ListItem>getDerivedStateFromProps - replaces componentWillReceiveProps</ListItem>
+            <ListItem>getSnapshotBeforeUpdate</ListItem>
+            <ListItem>componentWillUpdate deprecated</ListItem>
+          </List>
+        </Slide>
+        <Slide transition={['fade']}>
+          <Heading size={6} textColor="secondary">getDerivedStateFromProps</Heading>
+            <List>
+              <ListItem>a <b>static</b> class method</ListItem>
+              <ListItem>getSnapshotBeforeUpdate</ListItem>
+              <ListItem>componentWillUpdate deprecated</ListItem>
+            </List>
+            <CodePane
+              textSize="20px"
+              lang="js"
+              source={`class App extends React.Component {
+  // state calculated from props
+  // will be merged into prevState automatically like setState
+  static getDerivedStateFromProps(props, prevState) {
+    return {
+      if (props.disabled) {
+        // merge empty list into state
+        return { list: [] }
+      }
+      // merge nothing into state
+      return null;
+    }
+  }
+}`}
+                margin="100px 0 50px auto"
+          />
+        </Slide>
+        <Slide transition={['fade']}>
+            <Heading margin="-150px 100px 0 auto" size={6} textColor="secondary">getSnapshotBeforeUpdate</Heading>
+            <List>
+              <ListItem>Get dom information before updates happen, send them to componentDidUpdate to be used</ListItem>
+              <ListItem>Return value passed as third parameter to componentDidUpdate</ListItem>
+            </List>
+            <CodePane
+              textSize="20px"
+              lang="js"
+              source={`class App extends React.Component {
+  getSnapshotBeforeUpdate(prevProps, prevState) {
+    // check if current list length is greater then previous
+    if (prevProps.list.length < this.props.list.length) {
+      return (
+        // capture list scroll location and send to componentDidUpdate
+        this.listRef.scrollHeight - this.listRef.scrollTop
+      );
+    }
+    return null;
+  }
+
+  componentDidUpdate(prevProps, prevState, snapshot) {
+    // list changed, change scroll location to match previous
+    if (snapshot !== null) {
+      this.listRef.scrollTop =
+        this.listRef.scrollHeight - snapshot;
+    }
+  }`}
+          />
+        </Slide>
+        <Slide transition={['zoom']} bgColor="primary">
+          <Heading size={1} fit caps lineHeight={1} textColor="secondary">
+            React's Future
+          </Heading>
+        </Slide>
+        <Slide transition={['zoom']} bgColor="primary">
+          <Heading size={1} fit caps lineHeight={1} textColor="secondary">
+            React Suspense
+          </Heading>
+          <List>
+            <ListItem>Pause rendering until data is loaded</ListItem>
+            <ListItem>Fallback UI</ListItem>
+          </List>
+          <Link href="https://auth0.com/blog/time-slice-suspense-react16/" target="_blank">https://auth0.com/blog/time-slice-suspense-react16/</Link>
         </Slide>
       </Deck>
     );
