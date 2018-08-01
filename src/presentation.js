@@ -50,6 +50,7 @@ export default class Presentation extends React.Component {
           <Heading size={1} lineHeight={1} textColor="secondary">
             React's Latest Features
           </Heading>
+          <Link href="https://react-latest-features.surge.sh">https://react-latest-features.surge.sh</Link>
         </Slide>
         <Slide transition={['zoom']} bgColor="primary">
           <Heading size={2} lineHeight={1} textColor="secondary">
